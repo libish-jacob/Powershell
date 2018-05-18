@@ -1,3 +1,4 @@
+#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
 #$ErrorActionPreference = "silentlyContinue"
 
 function GetLoginItemName([psobject] $ie, [string] $tagName) {
@@ -18,11 +19,6 @@ function GetVDIItemLink([psobject] $ie) {
     $link = ($inputs | Where-Object {$_.id -Like "desktopSpinner_idCitrix.MPS.Desktop.XD75.XD_0020Windows_0020Dedicated_*"})                                                          
     return $link
 }
-
-#$Item = @("hel","hell","hello")
-#$items = $Item | Where-Object {$_ -like "he*"}
-#$items.Count
-
 
 $ie = new-object -com internetexplorer.application
 $ie.visible = $false
@@ -64,7 +60,7 @@ while (!$link) {
     Start-Sleep 3
 }
 
-"Starting VDI..."
+"Starting VDI... Enjoy the session."
 
 $link.click()
 
