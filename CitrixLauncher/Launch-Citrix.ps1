@@ -15,7 +15,6 @@ function GetLoginItemId([psobject] $ie, [string] $tagName) {
 
 function GetVDIItemLink([psobject] $ie) {
     $inputs = $ie.Document.getElementsByTagName("div")
-    #$link = ($inputs | Where-Object {$_.id -eq "desktopSpinner_idCitrix.MPS.Desktop.XD75.XD_0020Windows_0020Dedicated_0020_0024P2034"})
     $link = ($inputs | Where-Object {$_.id -Like "desktopSpinner_idCitrix.MPS.Desktop.XD75.XD_0020Windows_0020Dedicated_*"})                                                          
     return $link
 }
@@ -66,3 +65,6 @@ $link.click()
 
 #wait for some time before exit so that user can see the activity log.
 Start-Sleep -s 5
+
+# close browser.
+$ie.Quit();
