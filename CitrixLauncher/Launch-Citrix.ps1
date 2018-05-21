@@ -16,15 +16,25 @@ function GetLoginItemId([psobject] $ie, [string] $tagName) {
 function GetVDIItemLink([psobject] $ie) {
     $inputs = $ie.Document.getElementsByTagName("div")
     $link = ($inputs | Where-Object {$_.id -Like "desktopSpinner_idCitrix.MPS.Desktop.XD75.XD_0020Windows_0020Dedicated_*"})   
-    if($link -is [array])
-    {
+    if ($link -is [array]) {
         return $link[0]
     }
-    else{
+    else {
         return $link
-    }
-    
+    }    
 }
+
+function GetItem([psobject] $ie, [String]$element, [string]$id) {
+    $inputs = $ie.Document.getElementsByTagName($element)
+    $link = ($inputs | Where-Object {$_.id -eq $id})   
+    if ($link -is [array]) {
+        return $link[0]
+    }
+    else {
+        return $link
+    }    
+}
+
 
 $ie = new-object -com internetexplorer.application
 $ie.visible = $false
@@ -36,11 +46,12 @@ while ($ie.busy) {Start-Sleep 2}
 
 $loginItemName = GetLoginItemName $ie "login" 
 $link = GetVDIItemLink($ie)
-
-while (!$loginItemName -and !$link) {
+$iteration = 100
+while (($iteration -gt 0) -and (!$loginItemName -and !$link)) {
     Start-Sleep 2
     $loginItemName = GetLoginItemName $ie "login"
     $link = GetVDIItemLink($ie)
+    $iteration--
 }
 
 if ($loginItemName) {
@@ -61,17 +72,28 @@ if ($loginItemName) {
     }
 }
 
-while (!$link) {
+$iteration = 100
+$errorContainer = GetItem $ie "span" "errorMessageLabel"
+while (($iteration -gt 0) -and (!$link -and !$errorContainer)) {
     $link = GetVDIItemLink($ie)
+    $errorContainer = GetItem $ie "span" "errorMessageLabel"
     Start-Sleep 3
+    $iteration--
 }
 
-"Starting VDI... Enjoy the session."
-
-$link.click()
+if ($link) {
+    "Starting VDI... Enjoy the session."
+    $link.click()
+}
+elseif ($errorContainer) {
+    $errorContainer.textContent
+}
+else {
+    "Couldnt find any VDI. Please try manually."
+}
 
 #wait for some time before exit so that user can see the activity log.
-Start-Sleep -s 5
+Start-Sleep 5
 
 # close browser.
 $ie.Quit();
