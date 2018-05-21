@@ -15,8 +15,15 @@ function GetLoginItemId([psobject] $ie, [string] $tagName) {
 
 function GetVDIItemLink([psobject] $ie) {
     $inputs = $ie.Document.getElementsByTagName("div")
-    $link = ($inputs | Where-Object {$_.id -Like "desktopSpinner_idCitrix.MPS.Desktop.XD75.XD_0020Windows_0020Dedicated_*"})                                                          
-    return $link
+    $link = ($inputs | Where-Object {$_.id -Like "desktopSpinner_idCitrix.MPS.Desktop.XD75.XD_0020Windows_0020Dedicated_*"})   
+    if($link -is [array])
+    {
+        return $link[0]
+    }
+    else{
+        return $link
+    }
+    
 }
 
 $ie = new-object -com internetexplorer.application
