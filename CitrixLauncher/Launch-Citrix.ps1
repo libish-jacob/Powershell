@@ -52,7 +52,7 @@ if ($loginItemName) {
     $loginItemName = GetLoginItemName $ie "login"
     if ($loginItemName) {
         "Logging in..."
-        $loginItemName.value = "jajac"
+        $loginItemName.value = $username
         $loginPasswordItem = GetLoginItemName $ie "passwd" 
         $loginPasswordItem.value = $Password
 
